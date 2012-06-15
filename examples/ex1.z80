@@ -1,0 +1,15 @@
+.ORG 100
+
+label:
+.byte $myByte 0x33
+.word $myWord 0x3435
+
+ld b,c
+ld e,d
+.byte $xpto 0x32
+myLabel:
+	ld a,$myByte 
+	ld a,($myWord)
+	ld b,a
+	ld b,c
+

@@ -114,6 +114,13 @@ ld:
     | OPC_LD LEFT_PAR WORD RIGHT_PAR COMMA REG8                    { if(ld_pword_reg8($3, $6) < 0) YYABORT; }
     | OPC_LD REG8 COMMA IDENTIFIER                                 { if(ld_reg8_identifier($2, $4) < 0) { free($4); YYABORT; } free($4); }
     | OPC_LD REG8 COMMA LEFT_PAR IDENTIFIER RIGHT_PAR              { if(ld_reg8_pidentifier($2, $5) < 0) { free($5); YYABORT; } free($5); }
+    
+    
+    | OPC_LD REG16 COMMA WORD                                      { if(ld_reg16_word($2, $4)  < 0) YYABORT; }
+    | OPC_LD REG16 COMMA LEFT_PAR WORD RIGHT_PAR                   { if(ld_reg16_pword($2, $5) < 0) YYABORT; }
+    | OPC_LD LEFT_PAR WORD RIGHT_PAR COMMA REG16                   { if(ld_pword_reg16($3, $6) < 0) YYABORT; }
+    | OPC_LD REG16 COMMA REG16                                     { if(ld_reg16_reg16($2, $4) < 0) YYABORT; }
+    | OPC_LD REG16 COMMA IDENTIFIER                                { if(ld_reg16_identifier($2,$4) < 0) { free($4); YYABORT; } free($4); }
     ;
 
 %%

@@ -28,5 +28,12 @@ int ld_reg8_pword(int r1, short word);
 int ld_pword_reg8(short word, int r1);
 int ld_reg8_identifier(int r1, char *identifier);
 int ld_reg8_pidentifier(int r1, char *identifier);
+
+/* ld 16 bits */
+int ld_reg16_word(int r1, short word);
+int ld_reg16_pword(int r1, short word);
+int ld_pword_reg16(short word, int r1);
+int ld_reg16_reg16(int r1, int r2);
+int ld_reg16_identifier(int r1, char *identifier);
     
 #endif

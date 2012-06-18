@@ -43,7 +43,7 @@ int line = 1;
     ".byte"                     { return DECL_BYTE;   }
     ".word"                     { return DECL_WORD;   }
     ".string"                   { return DECL_STRING; }
-    ".org"                       { return ORG; }
+    ".org"                      { return ORG; }
     [a-zA-Z]+":"                { yylval.identifier = strdup(yytext); return DECL_LABEL; }
     
 
@@ -80,7 +80,7 @@ int line = 1;
 }
 
 <COMMENT>{
-    [\n]                        { BEGIN(INITIAL); }
+    [\n]                        {  ++line; BEGIN(INITIAL); }
     .                           ;
 }
 

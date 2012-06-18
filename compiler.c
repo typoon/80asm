@@ -96,16 +96,23 @@ void decl_label(char *identifier) {
 int get_reg_index(int r) {
     
     switch(r) {
-        case REG_A: return 0x07;
-        case REG_B: return 0x00;
-        case REG_C: return 0x01;
-        case REG_D: return 0x02;
-        case REG_E: return 0x03;
-        case REG_H: return 0x04;
-        case REG_L: return 0x05;
+        /* 8 bits */
+        case REG_A:  return 0x07;
+        case REG_B:  return 0x00;
+        case REG_C:  return 0x01;
+        case REG_D:  return 0x02;
+        case REG_E:  return 0x03;
+        case REG_H:  return 0x04;
+        case REG_L:  return 0x05;
+        
+        /* 16 bits */
+        case REG_BC: return 0x00;
+        case REG_DE: return 0x01;
+        case REG_HL: return 0x02;
+        case REG_SP: return 0x03;
     }
     
-    return 0;
+    return -1;
 }
 
 /* Opcodes */
@@ -188,12 +195,12 @@ int ld_reg8_reg8(int r1, int r2) {
 int ld_reg8_byte(int r1, char byte) {
     char opc[2];
     
-    r1 = get_reg_index(r1);
-    
     if((r1 == REG_I) || (r1 == REG_R)) {
         set_error("Invalid register");
         return C_ERROR;
     }
+    
+    r1 = get_reg_index(r1);
     
     opc[0] = (r1 << 3) | 0x06;
     opc[1] = byte;
@@ -494,6 +501,209 @@ int ld_reg8_pidentifier(int r1, char *identifier) {
     return ld_reg8_pword(r1, s->value.word);
 }
 
+/**
+ * LD r16, nn
+ * LD IX,  nn
+ * LD IY,  nn
+ */
+int ld_reg16_word(int r1, short word) {
+    
+    char opc[4];
+    
+    if(r1 == REG_IX) {
+        opc[0] = 0xDD;
+        opc[1] = 0x21;
+        opc[2] = (word & 0x00FF);
+        opc[3] = (word & 0xFF00) >> 8;
+        add_code(&opc[0], 4);
+        
+        return C_OK;
+    }
+    
+    if(r1 == REG_IY) {
+        opc[0] = 0xFD;
+        opc[1] = 0x21;
+        opc[2] = (word & 0x00FF);
+        opc[3] = (word & 0xFF00) >> 8;
+        add_code(&opc[0], 4);
+        
+        return C_OK;
+    }
+    
+    r1 = get_reg_index(r1);
+    opc[0] = (r1 << 4) | 0x01;
+    opc[1] = (word & 0x00FF);
+    opc[2] = (word & 0xFF00) >> 8;
+    add_code(&opc[0], 3);
+    
+    return C_OK;
+    
+}
+
+/**
+ * LD r16, (nn)
+ * LD IX,  (nn)
+ * LD IY,  (nn)
+ * LD HL,  (nn)
+ */
+int ld_reg16_pword(int r1, short word) {
+    
+    char opc[4];
+    
+    if(r1 == REG_HL) {
+        opc[0] = 0x2A;
+        opc[1] = (word & 0x00FF);
+        opc[2] = (word & 0xFF00) >> 8;
+        add_code(&opc[0], 3);
+        
+        return C_OK;
+    }
+    
+    if(r1 == REG_IX) {
+        opc[0] = 0xDD;
+        opc[1] = 0x2A;
+        opc[2] = (word & 0x00FF);
+        opc[3] = (word & 0xFF00) >> 8;
+        add_code(&opc[0], 4);
+        
+        return C_OK;
+        
+    }
+    
+    if(r1 == REG_IY) {
+        opc[0] = 0xFD;
+        opc[1] = 0x2A;
+        opc[2] = (word & 0x00FF);
+        opc[3] = (word & 0xFF00) >> 8;
+        add_code(&opc[0], 4);
+        
+        return C_OK;
+    }
+    
+    r1 = get_reg_index(r1);
+    opc[0] = 0xED;
+    opc[1] = (0x01 << 6) | (r1 << 4) | 0x0B;
+    opc[2] = (word & 0x00FF);
+    opc[3] = (word & 0xFF00) >> 8;
+    add_code(&opc[0], 4);
+    
+    return C_OK;
+    
+}
+
+/**
+ * LD (nn), r16
+ * LD (nn), HL
+ * LD (nn), IX
+ * LD (nn), IY
+ */
+int ld_pword_reg16(short word, int r1) {
+    char opc[4];
+    
+    if(r1 == REG_HL) {
+        opc[0] = 0x22;
+        opc[1] = (word & 0x00FF);
+        opc[2] = (word & 0xFF00) >> 8;
+        add_code(&opc[0], 3);
+        
+        return C_OK;
+        
+    }
+    
+    if(r1 == REG_IX) {
+        opc[0] = 0xDD;
+        opc[1] = 0x22;
+        opc[2] = (word & 0x00FF);
+        opc[3] = (word & 0xFF00) >> 8;
+        add_code(&opc[0], 4);
+        
+        return C_OK;
+        
+    }
+    
+    if(r1 == REG_IY) {
+        opc[0] = 0xFD;
+        opc[1] = 0x22;
+        opc[2] = (word & 0x00FF);
+        opc[3] = (word & 0xFF00) >> 8;
+        add_code(&opc[0], 4);
+        
+        return C_OK;
+        
+    }
+    
+    r1 = get_reg_index(r1);
+    opc[0] = 0xED;
+    opc[1] = (0x01 << 6) | (r1 << 4) | 0x03;
+    opc[2] = (word & 0x00FF);
+    opc[3] = (word & 0xFF00) >> 8;
+    add_code(&opc[0], 4);
+    
+    return C_OK;
+    
+}
+
+/**
+ * LD SP, HL
+ * LD SP, IX
+ * LD SP, IY
+ */
+int ld_reg16_reg16(int r1, int r2) {
+    char opc[2];
+    
+    if(r1 == REG_SP) {
+        if(r2 == REG_HL) {
+            opc[0] = 0xF9;
+            add_code(&opc[0], 1);
+            
+        } else if(r2 == REG_IX) {
+            opc[0] = 0xDD;
+            opc[1] = 0xF9;
+            add_code(&opc[0], 2);
+            
+        } else if(r2 == REG_IY) {
+            opc[0] = 0xFD;
+            opc[1] = 0xF9;
+            add_code(&opc[0], 2);
+            
+        } else {
+            set_error("Right register expected to be HL, IX or IY");
+            return C_ERROR;
+        }
+    } else {
+        set_error("Left register expected to be SP");
+        return C_ERROR;
+    }
+    
+    return C_OK;
+}
+
+int ld_reg16_identifier(int r1, char *identifier) {
+    symbol search;
+    symbol *s;
+    
+    search.name = identifier;
+    
+    s = list_find(symbols, &search);
+    
+    if(s == NULL) {
+        set_error("Symbol %s not declared", identifier);
+        return C_ERROR;
+    }
+    
+    if(s->type == SYM_WORD) {
+        return ld_reg16_word(r1, s->value.word);
+    }
+    
+    if((s->type == SYM_STR) || (s->type == SYM_LABEL)) {
+        return ld_reg16_word(r1, s->addr);
+    }
+    
+    set_error("Symbol %s is not a WORD or an ADDRESS (to a Label or String", 
+              identifier);
+    
+    return C_ERROR;
+}
 
 /* Start here */
 

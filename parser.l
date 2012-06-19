@@ -28,15 +28,18 @@ int line = 1;
     "E"                         { yylval.reg8  = REG_E;      return REG8; }
     "H"                         { yylval.reg8  = REG_H;      return REG8; }
     "L"                         { yylval.reg8  = REG_L;      return REG8; }
-    "FLAGS"                     { yylval.reg8  = REG_FLAGS;  return REG8; }
+    "F"                         { yylval.reg8  = REG_F;      return REG8; }
+    "R"                         { yylval.reg8  = REG_R;      return REG8; }
+    "I"                         { yylval.reg8  = REG_I;      return REG8; }
     "BC"                        { yylval.reg16 = REG_BC;     return REG16; }
     "DE"                        { yylval.reg16 = REG_DE;     return REG16; }
     "HL"                        { yylval.reg16 = REG_HL;     return REG16; }
     "IX"                        { yylval.reg16 = REG_IX;     return REG16; }
     "IY"                        { yylval.reg16 = REG_IY;     return REG16; }
     "SP"                        { yylval.reg16 = REG_SP;     return REG16; }
-    "R"                         { yylval.reg8  = REG_R;      return REG8; }
-    "I"                         { yylval.reg8  = REG_I;      return REG8; }
+    "AF'"                       { yylval.reg16 = REG_AF2;    return REG16; }
+    "AF"                        { yylval.reg16 = REG_AF;     return REG16; }
+
     
 
     ","                         { return COMMA; }

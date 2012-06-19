@@ -35,5 +35,16 @@ int ld_reg16_pword(int r1, short word);
 int ld_pword_reg16(short word, int r1);
 int ld_reg16_reg16(int r1, int r2);
 int ld_reg16_identifier(int r1, char *identifier);
-    
+
+/* push */
+int push_reg16(int r1);
+
+/* pop */
+int pop_reg16(int r1);
+
+/* exchange */
+int ex_reg16_reg16(int r1, int r2);
+int ex_preg16_reg16(int r1, int r2);
+int exx();
+
 #endif

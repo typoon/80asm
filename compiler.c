@@ -110,6 +110,7 @@ int get_reg_index(int r) {
         case REG_DE: return 0x01;
         case REG_HL: return 0x02;
         case REG_SP: return 0x03;
+        case REG_AF: return 0x03;
     }
     
     return -1;
@@ -703,6 +704,156 @@ int ld_reg16_identifier(int r1, char *identifier) {
               identifier);
     
     return C_ERROR;
+}
+
+/**
+ * PUSH r16
+ * PUSH IX
+ * PUSH IY
+ */
+int push_reg16(int r1) {
+    char opc[2];
+    
+    if(r1 == REG_IX) {
+        opc[0] = 0xDD;
+        opc[1] = 0xE5;
+        add_code(&opc[0], 2);
+        
+        return C_OK;
+    }
+    
+    if(r1 == REG_IY) {
+        opc[0] = 0xFD;
+        opc[1] = 0xE5;
+        add_code(&opc[0], 2);
+        
+        return C_OK;
+    }
+    
+    if(r1 == REG_SP) {
+        set_error("Invalid register (SP).");
+        
+        return C_ERROR;
+    }
+    
+    r1 = get_reg_index(r1);
+    
+    opc[0] = (0x03 << 6) | (r1 << 4) | 0x05;
+    add_code(&opc[0], 1);
+    
+    return C_OK;
+    
+}
+
+/**
+ * POP r16
+ * POP IX
+ * POP IY
+ */
+int pop_reg16(int r1) {
+    char opc[2];
+    
+    if(r1 == REG_IX) {
+        opc[0] = 0xDD;
+        opc[1] = 0xE1;
+        add_code(&opc[0], 2);
+        
+        return C_OK;
+    }
+    
+    if(r1 == REG_IY) {
+        opc[0] = 0xDD;
+        opc[1] = 0xFD;
+        add_code(&opc[0], 2);
+        
+        return C_OK;
+    }
+    
+    if(r1 == REG_SP) {
+        set_error("Invalid register (SP).");
+        
+        return C_ERROR;
+    }
+    
+    r1 = get_reg_index(r1);
+    
+    opc[0] = (0x03 << 6) | (r1 << 4) | 0x01;
+    add_code(&opc[0], 1);
+    
+    return C_OK;
+    
+}
+
+/**
+ * EX DE, HL
+ * EX AF,AF'
+ */
+int ex_reg16_reg16(int r1, int r2) {
+    char opc;
+    
+    if((r1 == REG_DE) && (r2 == REG_HL)) {
+        opc = 0xEB;
+        add_code(&opc, 1);
+        
+    } else if((r1 == REG_AF) && (r2 == REG_AF2)) {
+        opc = 0x08;
+        add_code(&opc, 1);
+        
+    } else {
+        set_error("Invalid register combination. Expected DE, HL or AF,AF'");
+        
+        return C_ERROR;
+    }
+    
+    return C_OK;
+}
+
+/**
+ * EX (SP), HL
+ * EX (SP), IX
+ * EX (SP), IY
+ */
+int ex_preg16_reg16(int r1, int r2) {
+    char opc[2];
+    
+    if(r1 != REG_SP) {
+        set_error("Invalid left register. Expected SP");
+        
+        return C_ERROR;
+        
+    }
+    
+    if(r2 == REG_HL) {
+        opc[0] = 0xE3;
+        add_code(&opc[0], 1);
+
+    } else if (r2 == REG_IX) {
+        opc[0] = 0xDD;
+        opc[1] = 0xE3;
+        add_code(&opc[0], 2);
+
+    } else if (r2 == REG_IY) {
+        opc[0] = 0xFD;
+        opc[1] = 0xE3;
+        add_code(&opc[0], 2);
+
+    } else {
+        set_error("Invalid right register. Expected HL, IX or IY");
+        
+        return C_ERROR;
+    }
+    
+    return C_OK;
+    
+}
+
+int exx() {
+    char opc;
+    
+    opc = 0xD9;
+    add_code(&opc, 1);
+    
+    return C_OK;
 }
 
 /* Start here */

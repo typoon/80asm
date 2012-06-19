@@ -64,6 +64,14 @@ extern int line;
 %token OPC_POP
 %token OPC_EX
 %token OPC_EXX
+%token OPC_LDI
+%token OPC_LDIR
+%token OPC_LDD
+%token OPC_LDDR
+%token OPC_CPI
+%token OPC_CPIR
+%token OPC_CPD
+%token OPC_CPDR
 
 %%
 
@@ -104,6 +112,14 @@ opcodes:
     | pop
     | ex
     | exx
+    | ldi
+    | ldir
+    | ldd
+    | lddr
+    | cpi
+    | cpir
+    | cpd
+    | cpdr
     ;
 
 ld:
@@ -139,9 +155,42 @@ ex:
     | OPC_EX LEFT_PAR REG16 RIGHT_PAR COMMA REG16              { if(ex_preg16_reg16($3, $6) < 0) YYABORT; }
 
 exx:
-    OPC_EXX                                                    { if(exx() < 0) YYABORT; }                                
+    OPC_EXX                                                    { if(exx() < 0) YYABORT; }
+    ;
+
+ldi:
+    OPC_LDI                                                    { if(ldi() < 0) YYABORT; }
     ;
     
+ldir:
+    OPC_LDIR                                                   { if(ldir() < 0) YYABORT; }
+    ;
+    
+ldd:
+    OPC_LDD                                                    { if(ldd() < 0) YYABORT; }
+    ;
+    
+lddr:
+    OPC_LDDR                                                   { if(lddr() < 0) YYABORT; }
+    ;
+    
+cpi:
+    OPC_CPI                                                    { if(cpi() < 0) YYABORT; }
+    ;
+    
+cpir:
+    OPC_CPIR                                                   { if(cpir() < 0) YYABORT; }
+    ;
+    
+cpd:
+    OPC_CPD                                                    { if(cpd() < 0) YYABORT; }
+    ;
+    
+cpdr:
+    OPC_CPDR                                                   { if(cpdr() < 0) YYABORT; }
+    ;
+
+
 %%
 
 

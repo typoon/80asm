@@ -23,6 +23,6 @@ clean:
 	@rm -f *.o
 	@rm -f *.gch
 	@rm -f parser.tab.c parser.tab.h lex.yy.c
-	@rm -rf bin/*
+	@rm -rf bin/$(PROG)
 
 

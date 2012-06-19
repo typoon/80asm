@@ -10,3 +10,8 @@
 *.lai
 *.la
 *.a
+
+lex.yy.c
+parser.tab.c
+parser.tab.h
+parser.tab.h.gch

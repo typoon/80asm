@@ -47,4 +47,14 @@ int ex_reg16_reg16(int r1, int r2);
 int ex_preg16_reg16(int r1, int r2);
 int exx();
 
+/* block transfer */
+int ldi();
+int ldir();
+int ldd();
+int lddr();
+int cpi();
+int cpir();
+int cpd();
+int cpdr();
+
 #endif

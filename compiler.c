@@ -847,11 +847,118 @@ int ex_preg16_reg16(int r1, int r2) {
     
 }
 
+/**
+ * EXX
+ */
 int exx() {
     char opc;
     
     opc = 0xD9;
     add_code(&opc, 1);
+    
+    return C_OK;
+}
+
+/**
+ * LDI
+ */
+int ldi() {
+    char opc[2];
+    
+    opc[0] = 0xED;
+    opc[1] = 0xA0;
+    add_code(&opc[0], 2);
+    
+    return C_OK;
+}
+
+/**
+ * LDIR
+ */
+int ldir() {
+    char opc[2];
+    
+    opc[0] = 0xED;
+    opc[1] = 0xB0;
+    add_code(&opc[0], 2);
+    
+    return C_OK;
+}
+
+/**
+ * LDD
+ */
+int ldd() {
+    char opc[2];
+    
+    opc[0] = 0xED;
+    opc[1] = 0xA8;
+    add_code(&opc[0], 2);
+    
+    return C_OK;
+}
+
+/**
+ * LDDR
+ */
+int lddr() {
+    char opc[2];
+    
+    opc[0] = 0xED;
+    opc[1] = 0xB8;
+    add_code(&opc[0], 2);
+    
+    return C_OK;
+}
+
+/**
+ * CPI
+ */
+int cpi() {
+    char opc[2];
+    
+    opc[0] = 0xED;
+    opc[1] = 0xA1;
+    add_code(&opc[0], 2);
+    
+    return C_OK;
+}
+
+/**
+ * CPIR
+ */
+int cpir() {
+    char opc[2];
+    
+    opc[0] = 0xED;
+    opc[1] = 0xB1;
+    add_code(&opc[0], 2);
+    
+    return C_OK;
+}
+
+/**
+ * CPD
+ */
+int cpd() {
+    char opc[2];
+    
+    opc[0] = 0xED;
+    opc[1] = 0xA9;
+    add_code(&opc[0], 2);
+    
+    return C_OK;
+}
+
+/**
+ * CPDR
+ */
+int cpdr() {
+    char opc[2];
+    
+    opc[0] = 0xED;
+    opc[1] = 0xB9;
+    add_code(&opc[0], 2);
     
     return C_OK;
 }

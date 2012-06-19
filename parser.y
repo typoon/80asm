@@ -72,6 +72,7 @@ extern int line;
 %token OPC_CPIR
 %token OPC_CPD
 %token OPC_CPDR
+%token OPC_ADD
 
 %%
 
@@ -120,6 +121,7 @@ opcodes:
     | cpir
     | cpd
     | cpdr
+    | add
     ;
 
 ld:
@@ -190,6 +192,13 @@ cpdr:
     OPC_CPDR                                                   { if(cpdr() < 0) YYABORT; }
     ;
 
+add:
+    OPC_ADD REG8 COMMA REG8                                    { if(add_reg8_reg8($2, $4) < 0) YYABORT; }
+    | OPC_ADD REG8 COMMA BYTE                                  { if(add_reg8_byte($2, $4) < 0) YYABORT; }
+    | OPC_ADD REG8 COMMA LEFT_PAR REG16 RIGHT_PAR              { if(add_reg8_preg16($2, $5) < 0) YYABORT; }
+    | OPC_ADD REG8 COMMA LEFT_PAR REG16 PLUS BYTE RIGHT_PAR    { if(add_reg8_preg16_byte($2, $5, $7) < 0) YYABORT; }
+    
+    ;
 
 %%
 

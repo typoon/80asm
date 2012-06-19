@@ -57,4 +57,10 @@ int cpir();
 int cpd();
 int cpdr();
 
+/* arithmetic */
+int add_reg8_reg8(int r1, int r2);
+int add_reg8_byte(int r1, char byte);
+int add_reg8_preg16(int r1, int r2);
+int add_reg8_preg16_byte(int r1, int r2, char byte);
+
 #endif

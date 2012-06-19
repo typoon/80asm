@@ -28,7 +28,7 @@ int line = 1;
     "E"                         { yylval.reg8  = REG_E;      return REG8; }
     "H"                         { yylval.reg8  = REG_H;      return REG8; }
     "L"                         { yylval.reg8  = REG_L;      return REG8; }
-    "F"                         { yylval.reg8  = REG_F;      return REG8; }
+    "F"                         { /* yylval.reg8  = REG_F;      return REG8; */ }
     "R"                         { yylval.reg8  = REG_R;      return REG8; }
     "I"                         { yylval.reg8  = REG_I;      return REG8; }
     "BC"                        { yylval.reg16 = REG_BC;     return REG16; }
@@ -76,7 +76,20 @@ int line = 1;
     "0x"[0-9a-fA-F]{3,4}        { yylval.word_val = strtol(yytext, NULL, 16); return WORD; }
 
 
-    "ld"                        { return OPC_LD; }
+    "ld"                        { return OPC_LD;   }
+    "push"                      { return OPC_PUSH; }
+    "pop"                       { return OPC_POP;  }
+    "ex"                        { return OPC_EX;   }
+    "exx"                       { return OPC_EXX;  }
+    "ldi"                       { return OPC_LDI;  }
+    "ldir"                      { return OPC_LDIR; }
+    "ldd"                       { return OPC_LDD;  }
+    "lddr"                      { return OPC_LDDR; }
+    "cpi"                       { return OPC_CPI;  }
+    "cpir"                      { return OPC_CPIR; }
+    "cpd"                       { return OPC_CPD;  }
+    "cpdr"                      { return OPC_CPDR; }
+    "add"                       { return OPC_ADD;  }
 
     ";"                         { BEGIN(COMMENT); }
     .                           ; 

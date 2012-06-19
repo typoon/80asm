@@ -71,6 +71,8 @@ void decl_string(char *identifier, char *value) {
     
     s->name = strdup(identifier);
     s->type = SYM_STR;
+    // Perhaps declaration of strings should only be allowed at the begining
+    // of the code. That way, addresses can be calculated as they get declared
     s->addr = 0; // Will be calculated at the end
     s->value.str = strdup(value);
     
@@ -959,6 +961,111 @@ int cpdr() {
     opc[0] = 0xED;
     opc[1] = 0xB9;
     add_code(&opc[0], 2);
+    
+    return C_OK;
+}
+
+/**
+ * ADD A, r8
+ */
+int add_reg8_reg8(int r1, int r2) {
+    
+    char opc;
+    
+    if(r1 != REG_A) {
+        set_error("Invalid left register. Register A expected");
+        
+        return C_ERROR;
+    }
+    
+    if((r2 == REG_I) || (r2 == REG_R)) {
+        set_error("Invalid right register");
+        
+        return C_ERROR;
+    }
+    
+    r2 = get_reg_index(r2);
+    opc = 0x80 | r2;
+    add_code(&opc, 1);
+    
+    return C_OK;
+}
+
+/**
+ * ADD A, n
+ */
+int add_reg8_byte(int r1, char byte) {
+    
+    char opc[2];
+    
+    if(r1 != REG_A) {
+        set_error("Invalid left register. Register A expected");
+        
+        return C_ERROR;
+    }
+    
+    opc[0] = 0xC6;
+    opc[1] = byte;
+    add_code(&opc[0], 2);
+    
+    return C_OK;
+}
+
+/**
+ * ADD A, (HL)
+ */
+int add_reg8_preg16(int r1, int r2) {
+    
+    char opc;
+    
+    if(r1 != REG_A) {
+        set_error("Invalid left register. Register A expected");
+        
+        return C_ERROR;
+    }
+    
+    if(r2 != REG_HL) {
+        set_error("Invalid right register. Register HL expected");
+        
+        return C_ERROR;
+    }
+    
+    opc = 0x86;
+    add_code(&opc, 1);
+    
+    return C_OK;
+}
+
+/**
+ * ADD A, (IX + d)
+ * ADD A, (IY + d)
+ */
+int add_reg8_preg16_byte(int r1, int r2, char byte) {
+    
+    char opc[3];
+    
+    if(r1 != REG_A) {
+        set_error("Invalid left register. Register A expected");
+        
+        return C_ERROR;
+    }
+    
+    if(r2 == REG_IX) {
+        opc[0] = 0xDD;
+        
+    } else if(r2 == REG_IY) {
+        opc[0] = 0xFD;
+        
+    } else {
+        set_error("Invalid right register. Register IX or IY expected");
+        
+        return C_ERROR;
+    }
+    
+    opc[1] = 0x86;
+    opc[2] = byte;
+    
+    add_code(&opc[0], 3);
     
     return C_OK;
 }

@@ -12,4 +12,5 @@ myLabel:
 	ld a,($myWord)
 	ld b,a
 	ld b,c
+	add a,c
 

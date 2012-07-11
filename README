@@ -1,11 +1,14 @@
 Greetings!
 
 This is 80asm, a z80 assembler with simple syntax!
-This assembler (in theory) can generate code that could be save to a ROM
+This assembler (in theory) can generate code that could be saved to a ROM
 and used directly with a Zilog z80 processor.
 
 
 
 TODO:
     A 'label' cannot be the last instruction in the assembly file
+    Write more example files
+    Write tests to make sure opcodes being generated are correct
+    
     

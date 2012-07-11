@@ -438,7 +438,7 @@ int ld_pword_reg8(short word, int r1) {
     char opc[3];
     
     if(r1 != REG_A) {
-        // set_error("Invalid right register. Expected A");
+         set_error("Invalid right register. Expected register A");
         return C_ERROR;
     }
     

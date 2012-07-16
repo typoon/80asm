@@ -39,7 +39,8 @@ void decl_byte(char *identifier, char value) {
     s->name = strdup(identifier);
     s->type = SYM_BYTE;
     
-    /* No address, this symbol will be replaced during compile time */
+    /* No address, this symbol will be replaced by its value */
+    /* during compile time                                   */
     s->addr = 0;
     s->value.byte = value;
     
@@ -56,7 +57,8 @@ void decl_word(char *identifier, short value) {
     s->name = strdup(identifier);
     s->type = SYM_WORD;
     
-    /* No address, this symbol will be replaced during compile time */
+    /* No address, this symbol will be replaced by its value */
+    /* during compile time                                   */
     s->addr = 0; 
     s->value.word = value;
     
@@ -93,7 +95,6 @@ void decl_label(char *identifier) {
     
     list_add(symbols, s);
 }
-
 
 int get_reg_index(int r) {
     
@@ -479,7 +480,7 @@ int ld_reg8_identifier(int r1, char *identifier) {
 }
 
 /**
- * LD r, (identifier)
+ * LD r, ($identifier)
  * This will be translated to LD r, (nn)
  */
 int ld_reg8_pidentifier(int r1, char *identifier) {
@@ -681,6 +682,9 @@ int ld_reg16_reg16(int r1, int r2) {
     return C_OK;
 }
 
+/**
+ * LD r8, $identifier
+ */
 int ld_reg16_identifier(int r1, char *identifier) {
     symbol search;
     symbol *s;
@@ -1068,6 +1072,30 @@ int add_reg8_preg16_byte(int r1, int r2, char byte) {
     add_code(&opc[0], 3);
     
     return C_OK;
+}
+
+/**
+ * ADD A, $identifier
+ */
+int add_reg8_identifier(int r1, char *identifier) {
+    symbol search;
+    symbol *s;
+    
+    search.name = identifier;
+    
+    s = list_find(symbols, &search);
+    
+    if(s == NULL) {
+        set_error("Symbol %s not declared", identifier);
+        return C_ERROR;
+    }
+    
+    if(s->type != SYM_BYTE) {
+        set_error("Symbol %s should be a byte", identifier);
+        return C_ERROR;
+    }
+    
+    return add_reg8_byte(r1, s->value.byte);
 }
 
 /* Start here */

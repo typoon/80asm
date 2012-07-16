@@ -40,7 +40,9 @@ int line = 1;
     "AF'"                       { yylval.reg16 = REG_AF2;    return REG16; }
     "AF"                        { yylval.reg16 = REG_AF;     return REG16; }
 
-    
+    ".data"                     { return DATA; }
+    ".code"                     { return CODE; }
+    ".text"                     { return CODE; }
 
     ","                         { return COMMA; }
     ".byte"                     { return DECL_BYTE;   }

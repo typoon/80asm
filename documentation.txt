@@ -1,0 +1,124 @@
+Documentation
+
+Introduction
+
+Compiler reference
+
+The compiler has some directives itself (not many!). Below are all of them
+
+.data
+This directive should only be used in the begining of your asm file as the
+first instruction and it is optional. It is used to declare data types to be
+used by the program. 
+These datatypes can be either .byte, .word or .string
+
+.byte
+Declares a byte (8 bits). The syntax is: .byte $symbol_name 0x42
+This value is never stored in memory. The symbol is replaced by its value 
+during compile time.
+
+.word
+Declares a word (16 bits). The syntax is: .word $symbol_name 0x42FF
+This value is never stored in memory. The symbol is replaced by its value 
+during compile time.
+
+.string
+Declares a string that is terminated with a NULL (0x00) byte. The string is 
+stored in memory and will be referenced by its address.
+The syntax is: .string $symbol_name "80asm is really nice :)"
+
+.code
+This is an obligatory directive that is used to identify where the code section
+starts. After this directive, all assembly instructions can be used as well as 
+the '.org' directive and labels.
+
+.text
+It is an alias for .code
+
+.org
+This directive is optional, and if used, should come right after the '.code'
+or '.text' directive. It is used to determine in which address the code will
+start.
+Suppose the directive '.org 0x100' is issued. Everything prior to the address
+0x100 is filled with NULL bytes (0x00).
+
+label:
+Declares a label. The word 'label' can be replaced by any word to mark a place
+in the source code that one can jump to.
+
+
+Language reference
+
+    LD reg8, reg8
+    LD reg8, byte
+    LD reg8, (reg16)                  ; Takes the value at address reg16 and moves it to reg8
+    LD reg8, (reg16 +  byte)          ; Takes the value at address reg16 + byte and moves it to reg8
+    LD (reg16), reg8                  ; Moves the value of reg8 to the memory location pointed by reg16
+    LD (reg16 + byte), reg8
+    LD (reg16), byte
+    LD (reg16 + byte), byte
+    LD reg8, (word)
+    LD (word), reg8
+    LD reg8, $symbol                  ; $symbol must be of type .byte. Translates into LD reg8, byte
+    LD reg8, ($symbol)                ; $symbol must be of type .word. Translates into LD reg8, (word)
+    LD reg16, word
+    LD reg16, (word)                  ; The byte at (word) is loaded into the low byte of reg16, and the byte at (word+1) is loaded into the high byte of reg16
+    LD (word), reg16
+    LD reg16, reg16
+    LD reg16, $symbol                 ; $symbol must be of type .word. Translates into LD reg16, word
+    
+    
+    PUSH reg16                        ; High byte order is pushed to SP-1 and the low byte order to SP-2. SP = SP - 2
+    
+    POP                               ; SP is pushed to low byte order. SP is incremented. SP is pushed to high byte order. SP is incremented
+
+    EX reg16, reg16                   ; 
+    EX (reg16), reg16
+
+ex:
+    OPC_EX REG16 COMMA REG16                                   { if(ex_reg16_reg16($2, $4) < 0) YYABORT; }
+    | OPC_EX LEFT_PAR REG16 RIGHT_PAR COMMA REG16              { if(ex_preg16_reg16($3, $6) < 0) YYABORT; }
+
+exx:
+    OPC_EXX                                                    { if(exx() < 0) YYABORT; }
+    ;
+
+ldi:
+    OPC_LDI                                                    { if(ldi() < 0) YYABORT; }
+    ;
+    
+ldir:
+    OPC_LDIR                                                   { if(ldir() < 0) YYABORT; }
+    ;
+    
+ldd:
+    OPC_LDD                                                    { if(ldd() < 0) YYABORT; }
+    ;
+    
+lddr:
+    OPC_LDDR                                                   { if(lddr() < 0) YYABORT; }
+    ;
+    
+cpi:
+    OPC_CPI                                                    { if(cpi() < 0) YYABORT; }
+    ;
+    
+cpir:
+    OPC_CPIR                                                   { if(cpir() < 0) YYABORT; }
+    ;
+    
+cpd:
+    OPC_CPD                                                    { if(cpd() < 0) YYABORT; }
+    ;
+    
+cpdr:
+    OPC_CPDR                                                   { if(cpdr() < 0) YYABORT; }
+    ;
+
+add:
+    OPC_ADD REG8 COMMA REG8                                    { if(add_reg8_reg8($2, $4) < 0) YYABORT; }
+    | OPC_ADD REG8 COMMA BYTE                                  { if(add_reg8_byte($2, $4) < 0) YYABORT; }
+    | OPC_ADD REG8 COMMA LEFT_PAR REG16 RIGHT_PAR              { if(add_reg8_preg16($2, $5) < 0) YYABORT; }
+    | OPC_ADD REG8 COMMA LEFT_PAR REG16 PLUS BYTE RIGHT_PAR    { if(add_reg8_preg16_byte($2, $5, $7) < 0) YYABORT; }
+    
+    ;

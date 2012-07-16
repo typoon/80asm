@@ -74,11 +74,23 @@ extern int line;
 %token OPC_CPDR
 %token OPC_ADD
 
+%token DATA
+%token CODE
+
 %%
 
 start:
-    org body
-    | body
+    data code
+    | code
+    ;
+
+data:
+    DATA declares
+    ;
+
+code:
+    CODE org body
+    | CODE body
     ;
 
 org:
@@ -86,10 +98,13 @@ org:
     | ORG BYTE                         { org($2); }
 
 body:
-    body declares mnemonics
-    | declares mnemonics
+    body labels mnemonics
+    | labels mnemonics
     ;
-    
+
+labels:
+    DECL_LABEL                         { decl_label($1); free($1); }
+
 declares:
     declares declare
     | declare
@@ -99,7 +114,6 @@ declare:
       DECL_BYTE IDENTIFIER BYTE        { decl_byte($2, $3);   free($2); }
     | DECL_WORD IDENTIFIER WORD        { decl_word($2, $3);   free($2); }
     | DECL_STRING IDENTIFIER STRING    { decl_string($2, $3); free($2); free($3); }
-    | DECL_LABEL                       { decl_label($1);      free($1); }
     ;
 
 mnemonics:
@@ -197,6 +211,7 @@ add:
     | OPC_ADD REG8 COMMA BYTE                                  { if(add_reg8_byte($2, $4) < 0) YYABORT; }
     | OPC_ADD REG8 COMMA LEFT_PAR REG16 RIGHT_PAR              { if(add_reg8_preg16($2, $5) < 0) YYABORT; }
     | OPC_ADD REG8 COMMA LEFT_PAR REG16 PLUS BYTE RIGHT_PAR    { if(add_reg8_preg16_byte($2, $5, $7) < 0) YYABORT; }
+    | OPC_ADD REG8 COMMA IDENTIFIER                            { if(add_reg8_identifier($2, $4) < 0) { free($4); YYABORT; } free($4); }
     
     ;
 

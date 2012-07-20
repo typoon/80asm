@@ -1228,6 +1228,113 @@ int adc_reg8_identifier(int r1, char *identifier) {
     return adc_reg8_byte(r1, s->value.byte);
 }
 
+/**
+ * SUB r8
+ */
+int sub_reg8(int r) {
+    
+    char opc;
+
+    if((r == REG_I) || (r == REG_R)) {
+        set_error("Invalid register");
+        return C_ERROR;
+    }
+    
+    r = get_reg_index(r);
+    opc = 0x90 | r;
+    add_code(&opc, 1);
+    
+    return C_OK;
+
+}
+
+/**
+ * SUB n
+ */
+int sub_byte(char byte) {
+    
+    char opc[2];
+
+    opc[0] = 0xD6;
+    opc[1] = byte;
+    add_code(&opc[0], 2);
+    
+    return C_OK;
+
+}
+
+/**
+ * SUB (HL)
+ */
+int sub_preg16(int r) {
+
+    char opc;
+
+    if(r != REG_HL) {
+        set_error("Invalid register. Register HL expected");
+        return C_ERROR;
+    }
+    
+    opc = 0x96;
+    add_code(&opc, 1);
+    
+    return C_OK;
+    
+}
+
+/**
+ * SUB (IX + d)
+ * SUB (IY + d)
+ */
+int sub_preg16_byte(int r, char byte) {
+    char opc[3];
+    
+    if(r == REG_IX) {
+        opc[0] = 0xDD;
+        
+    } else if(r == REG_IY) {
+        opc[0] = 0xFD;
+        
+    } else {
+        set_error("Invalid register. Register IX or IY expected");
+        
+        return C_ERROR;
+    }
+    
+    opc[1] = 0x96;
+    opc[2] = byte;
+    
+    add_code(&opc[0], 3);
+    
+    return C_OK;
+}
+
+/**
+ * SUB $identifier
+ */
+int sub_identifier(char *identifier) {
+
+    symbol search;
+    symbol *s;
+    
+    search.name = identifier;
+    
+    s = list_find(symbols, &search);
+    
+    if(s == NULL) {
+        set_error("Symbol %s not declared", identifier);
+        return C_ERROR;
+    }
+    
+    if(s->type != SYM_BYTE) {
+        set_error("Symbol %s should be a byte", identifier);
+        return C_ERROR;
+    }
+    
+    return sub_byte(s->value.byte);
+    
+}
+
 /* Start here */
 
 void usage(char *pgm_name) {

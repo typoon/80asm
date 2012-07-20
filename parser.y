@@ -74,6 +74,7 @@ extern int line;
 %token OPC_CPDR
 %token OPC_ADD
 %token OPC_ADC
+%token OPC_SUB
 
 %token DATA
 %token CODE
@@ -101,10 +102,12 @@ org:
 body:
     body labels mnemonics
     | labels mnemonics
+    | mnemonics
     ;
 
 labels:
     DECL_LABEL                         { decl_label($1); free($1); }
+    ;
 
 declares:
     declares declare
@@ -138,6 +141,7 @@ opcodes:
     | cpdr
     | add
     | adc
+    | sub
     ;
 
 ld:
@@ -214,6 +218,13 @@ add:
     | OPC_ADD REG8 COMMA LEFT_PAR REG16 RIGHT_PAR              { if(add_reg8_preg16($2, $5) < 0) YYABORT; }
     | OPC_ADD REG8 COMMA LEFT_PAR REG16 PLUS BYTE RIGHT_PAR    { if(add_reg8_preg16_byte($2, $5, $7) < 0) YYABORT; }
     | OPC_ADD REG8 COMMA IDENTIFIER                            { if(add_reg8_identifier($2, $4) < 0) { free($4); YYABORT; } free($4); }
+    
+    | OPC_ADD REG8                                             { if(add_reg8_reg8(REG_A, $2) < 0) YYABORT; }
+    | OPC_ADD BYTE                                             { if(add_reg8_byte(REG_A, $2) < 0) YYABORT; }
+    | OPC_ADD LEFT_PAR REG16 RIGHT_PAR                         { if(add_reg8_preg16(REG_A, $3) < 0) YYABORT; }
+    | OPC_ADD LEFT_PAR REG16 PLUS BYTE RIGHT_PAR               { if(add_reg8_preg16_byte(REG_A, $3, $5) < 0) YYABORT; }
+    | OPC_ADD IDENTIFIER                                       { if(add_reg8_identifier(REG_A, $2) < 0) { free($2); YYABORT; } free($2); }
+    
     ;
 
 adc:
@@ -222,6 +233,20 @@ adc:
     | OPC_ADC REG8 COMMA LEFT_PAR REG16 RIGHT_PAR              { if(adc_reg8_preg16($2, $5) < 0) YYABORT; }
     | OPC_ADC REG8 COMMA LEFT_PAR REG16 PLUS BYTE RIGHT_PAR    { if(adc_reg8_preg16_byte($2, $5, $7) < 0) YYABORT; }
     | OPC_ADC REG8 COMMA IDENTIFIER                            { if(adc_reg8_identifier($2, $4) < 0) { free($4); YYABORT; } free($4); }
+
+    | OPC_ADC REG8                                             { if(adc_reg8_reg8(REG_A, $2) < 0) YYABORT; }
+    | OPC_ADC BYTE                                             { if(adc_reg8_byte(REG_A, $2) < 0) YYABORT; }
+    | OPC_ADC LEFT_PAR REG16 RIGHT_PAR                         { if(adc_reg8_preg16(REG_A, $3) < 0) YYABORT; }
+    | OPC_ADC LEFT_PAR REG16 PLUS BYTE RIGHT_PAR               { if(adc_reg8_preg16_byte(REG_A, $3, $5) < 0) YYABORT; }
+    | OPC_ADC IDENTIFIER                                       { if(adc_reg8_identifier(REG_A, $2) < 0) { free($2); YYABORT; } free($2); }
+    ;
+
+sub:
+    OPC_SUB REG8                                               { if(sub_reg8($2) < 0) YYABORT; }
+    | OPC_SUB BYTE                                             { if(sub_byte($2) < 0) YYABORT; }
+    | OPC_SUB LEFT_PAR REG16 RIGHT_PAR                         { if(sub_preg16($3) < 0) YYABORT; }
+    | OPC_SUB LEFT_PAR REG16 PLUS BYTE RIGHT_PAR               { if(sub_preg16_byte($3, $5) < 0) YYABORT; }
+    | OPC_SUB IDENTIFIER                                       { if(sub_identifier($2) < 0) { free($2); YYABORT; } free($2); }
     ;
 
 %%

@@ -93,6 +93,7 @@ int line = 1;
     "cpdr"                      { return OPC_CPDR; }
     "add"                       { return OPC_ADD;  }
     "adc"                       { return OPC_ADC;  }
+    "sub"                       { return OPC_SUB;  }
 
     ";"                         { BEGIN(COMMENT); }
     .                           ; 

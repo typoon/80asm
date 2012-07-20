@@ -70,4 +70,10 @@ int adc_reg8_preg16(int r1, int r2);
 int adc_reg8_preg16_byte(int r1, int r2, char byte);
 int adc_reg8_identifier(int r1, char *identifier);
 
+int sub_reg8(int r);
+int sub_byte(char byte);
+int sub_preg16(int r);
+int sub_preg16_byte(int r, char byte);
+int sub_identifier(char *identifier);
+
 #endif

@@ -1098,6 +1098,136 @@ int add_reg8_identifier(int r1, char *identifier) {
     return add_reg8_byte(r1, s->value.byte);
 }
 
+
+/**
+ * ADC A, r8
+ */
+int adc_reg8_reg8(int r1, int r2) {
+    
+    char opc;
+    
+    if(r1 != REG_A) {
+        set_error("Invalid left register. Register A expected");
+        
+        return C_ERROR;
+    }
+    
+    if((r2 == REG_I) || (r2 == REG_R)) {
+        set_error("Invalid right register");
+        
+        return C_ERROR;
+    }
+    
+    r2 = get_reg_index(r2);
+    opc = 0x88 | r2;
+    add_code(&opc, 1);
+    
+    return C_OK;
+}
+
+/**
+ * ADC A, n
+ */
+int adc_reg8_byte(int r1, char byte) {
+    
+    char opc[2];
+    
+    if(r1 != REG_A) {
+        set_error("Invalid left register. Register A expected");
+        
+        return C_ERROR;
+    }
+    
+    opc[0] = 0xCE;
+    opc[1] = byte;
+    add_code(&opc[0], 2);
+    
+    return C_OK;
+}
+
+/**
+ * ADC A, (HL)
+ */
+int adc_reg8_preg16(int r1, int r2) {
+    
+    char opc;
+    
+    if(r1 != REG_A) {
+        set_error("Invalid left register. Register A expected");
+        
+        return C_ERROR;
+    }
+    
+    if(r2 != REG_HL) {
+        set_error("Invalid right register. Register HL expected");
+        
+        return C_ERROR;
+    }
+    
+    opc = 0x8E;
+    add_code(&opc, 1);
+    
+    return C_OK;
+}
+
+/**
+ * ADC A, (IX + d)
+ * ADC A, (IY + d)
+ */
+int adc_reg8_preg16_byte(int r1, int r2, char byte) {
+    
+    char opc[3];
+    
+    if(r1 != REG_A) {
+        set_error("Invalid left register. Register A expected");
+        
+        return C_ERROR;
+    }
+    
+    if(r2 == REG_IX) {
+        opc[0] = 0xDD;
+        
+    } else if(r2 == REG_IY) {
+        opc[0] = 0xFD;
+        
+    } else {
+        set_error("Invalid right register. Register IX or IY expected");
+        
+        return C_ERROR;
+    }
+    
+    opc[1] = 0x8E;
+    opc[2] = byte;
+    
+    add_code(&opc[0], 3);
+    
+    return C_OK;
+}
+
+/**
+ * ADC A, $identifier
+ */
+int adc_reg8_identifier(int r1, char *identifier) {
+    symbol search;
+    symbol *s;
+    
+    search.name = identifier;
+    
+    s = list_find(symbols, &search);
+    
+    if(s == NULL) {
+        set_error("Symbol %s not declared", identifier);
+        return C_ERROR;
+    }
+    
+    if(s->type != SYM_BYTE) {
+        set_error("Symbol %s should be a byte", identifier);
+        return C_ERROR;
+    }
+    
+    return adc_reg8_byte(r1, s->value.byte);
+}
+
 /* Start here */
 
 void usage(char *pgm_name) {

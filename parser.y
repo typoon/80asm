@@ -73,6 +73,7 @@ extern int line;
 %token OPC_CPD
 %token OPC_CPDR
 %token OPC_ADD
+%token OPC_ADC
 
 %token DATA
 %token CODE
@@ -136,6 +137,7 @@ opcodes:
     | cpd
     | cpdr
     | add
+    | adc
     ;
 
 ld:
@@ -212,7 +214,14 @@ add:
     | OPC_ADD REG8 COMMA LEFT_PAR REG16 RIGHT_PAR              { if(add_reg8_preg16($2, $5) < 0) YYABORT; }
     | OPC_ADD REG8 COMMA LEFT_PAR REG16 PLUS BYTE RIGHT_PAR    { if(add_reg8_preg16_byte($2, $5, $7) < 0) YYABORT; }
     | OPC_ADD REG8 COMMA IDENTIFIER                            { if(add_reg8_identifier($2, $4) < 0) { free($4); YYABORT; } free($4); }
-    
+    ;
+
+adc:
+    OPC_ADC REG8 COMMA REG8                                    { if(adc_reg8_reg8($2, $4) < 0) YYABORT; }
+    | OPC_ADC REG8 COMMA BYTE                                  { if(adc_reg8_byte($2, $4) < 0) YYABORT; }
+    | OPC_ADC REG8 COMMA LEFT_PAR REG16 RIGHT_PAR              { if(adc_reg8_preg16($2, $5) < 0) YYABORT; }
+    | OPC_ADC REG8 COMMA LEFT_PAR REG16 PLUS BYTE RIGHT_PAR    { if(adc_reg8_preg16_byte($2, $5, $7) < 0) YYABORT; }
+    | OPC_ADC REG8 COMMA IDENTIFIER                            { if(adc_reg8_identifier($2, $4) < 0) { free($4); YYABORT; } free($4); }
     ;
 
 %%

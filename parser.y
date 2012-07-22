@@ -75,6 +75,9 @@ extern int line;
 %token OPC_ADD
 %token OPC_ADC
 %token OPC_SUB
+%token OPC_SBC
+%token OPC_AND
+%token OPC_OR
 
 %token DATA
 %token CODE
@@ -142,6 +145,9 @@ opcodes:
     | add
     | adc
     | sub
+    | sbc
+    | and
+    | or
     ;
 
 ld:
@@ -247,6 +253,30 @@ sub:
     | OPC_SUB LEFT_PAR REG16 RIGHT_PAR                         { if(sub_preg16($3) < 0) YYABORT; }
     | OPC_SUB LEFT_PAR REG16 PLUS BYTE RIGHT_PAR               { if(sub_preg16_byte($3, $5) < 0) YYABORT; }
     | OPC_SUB IDENTIFIER                                       { if(sub_identifier($2) < 0) { free($2); YYABORT; } free($2); }
+    ;
+
+sbc:
+    OPC_SBC REG8                                               { if(sbc_reg8($2) < 0) YYABORT; }
+    | OPC_SBC BYTE                                             { if(sbc_byte($2) < 0) YYABORT; }
+    | OPC_SBC LEFT_PAR REG16 RIGHT_PAR                         { if(sbc_preg16($3) < 0) YYABORT; }
+    | OPC_SBC LEFT_PAR REG16 PLUS BYTE RIGHT_PAR               { if(sbc_preg16_byte($3, $5) < 0) YYABORT; }
+    | OPC_SBC IDENTIFIER                                       { if(sbc_identifier($2) < 0) { free($2); YYABORT; } free($2); }
+    ;
+
+and:
+    OPC_AND REG8                                               { if(and_reg8($2) < 0) YYABORT; }
+    | OPC_AND BYTE                                             { if(and_byte($2) < 0) YYABORT; }
+    | OPC_AND LEFT_PAR REG16 RIGHT_PAR                         { if(and_preg16($3) < 0) YYABORT; }
+    | OPC_AND LEFT_PAR REG16 PLUS BYTE RIGHT_PAR               { if(and_preg16_byte($3, $5) < 0) YYABORT; }
+    | OPC_AND IDENTIFIER                                       { if(and_identifier($2) < 0) { free($2); YYABORT; } free($2); }
+    ;
+
+or:
+    OPC_OR REG8                                                { if(or_reg8($2) < 0) YYABORT; }
+    | OPC_OR BYTE                                              { if(or_byte($2) < 0) YYABORT; }
+    | OPC_OR LEFT_PAR REG16 RIGHT_PAR                          { if(or_preg16($3) < 0) YYABORT; }
+    | OPC_OR LEFT_PAR REG16 PLUS BYTE RIGHT_PAR                { if(or_preg16_byte($3, $5) < 0) YYABORT; }
+    | OPC_OR IDENTIFIER                                        { if(or_identifier($2) < 0) { free($2); YYABORT; } free($2); }
     ;
 
 %%

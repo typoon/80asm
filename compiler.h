@@ -76,4 +76,23 @@ int sub_preg16(int r);
 int sub_preg16_byte(int r, char byte);
 int sub_identifier(char *identifier);
 
+int sbc_reg8(int r);
+int sbc_byte(char byte);
+int sbc_preg16(int r);
+int sbc_preg16_byte(int r, char byte);
+int sbc_identifier(char *identifier);
+
+/* logic */
+int and_reg8(int r);
+int and_byte(char byte);
+int and_preg16(int r);
+int and_preg16_byte(int r, char byte);
+int and_identifier(char *identifier);
+
+int or_reg8(int r);
+int or_byte(char byte);
+int or_preg16(int r);
+int or_preg16_byte(int r, char byte);
+int or_identifier(char *identifier);
+
 #endif

@@ -94,6 +94,9 @@ int line = 1;
     "add"                       { return OPC_ADD;  }
     "adc"                       { return OPC_ADC;  }
     "sub"                       { return OPC_SUB;  }
+    "sbc"                       { return OPC_SBC;  }
+    "and"                       { return OPC_AND;  }
+    "or"                        { return OPC_OR;   }
 
     ";"                         { BEGIN(COMMENT); }
     .                           ; 

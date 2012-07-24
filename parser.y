@@ -78,6 +78,21 @@ extern int line;
 %token OPC_SBC
 %token OPC_AND
 %token OPC_OR
+%token OPC_XOR
+%token OPC_CP
+%token OPC_INC
+%token OPC_DEC
+%token OPC_DAA
+%token OPC_CPL
+%token OPC_NEG
+%token OPC_CCF
+%token OPC_SCF
+%token OPC_NOP
+%token OPC_HALT
+%token OPC_DI
+%token OPC_EI
+%token OPC_IM
+
 
 %token DATA
 %token CODE
@@ -148,6 +163,20 @@ opcodes:
     | sbc
     | and
     | or
+    | xor
+    | cp
+    | inc
+    | dec
+    | daa
+    | cpl
+    | neg
+    | ccf
+    | scf
+    | nop
+    | halt
+    | di
+    | ei
+    | im
     ;
 
 ld:
@@ -278,6 +307,75 @@ or:
     | OPC_OR LEFT_PAR REG16 PLUS BYTE RIGHT_PAR                { if(or_preg16_byte($3, $5) < 0) YYABORT; }
     | OPC_OR IDENTIFIER                                        { if(or_identifier($2) < 0) { free($2); YYABORT; } free($2); }
     ;
+
+xor:
+    OPC_XOR REG8                                               { if(xor_reg8($2) < 0) YYABORT; }
+    | OPC_XOR BYTE                                             { if(xor_byte($2) < 0) YYABORT; }
+    | OPC_XOR LEFT_PAR REG16 RIGHT_PAR                         { if(xor_preg16($3) < 0) YYABORT; }
+    | OPC_XOR LEFT_PAR REG16 PLUS BYTE RIGHT_PAR               { if(xor_preg16_byte($3, $5) < 0) YYABORT; }
+    | OPC_XOR IDENTIFIER                                       { if(xor_identifier($2) < 0) { free($2); YYABORT; } free($2); }
+    ;
+
+cp:
+    OPC_CP REG8                                                { if(cp_reg8($2) < 0) YYABORT; }
+    | OPC_CP BYTE                                              { if(cp_byte($2) < 0) YYABORT; }
+    | OPC_CP LEFT_PAR REG16 RIGHT_PAR                          { if(cp_preg16($3) < 0) YYABORT; }
+    | OPC_CP LEFT_PAR REG16 PLUS BYTE RIGHT_PAR                { if(cp_preg16_byte($3, $5) < 0) YYABORT; }
+    | OPC_CP IDENTIFIER                                        { if(cp_identifier($2) < 0) { free($2); YYABORT; } free($2); }
+    ;
+
+inc:
+    OPC_INC REG8                                               { if(inc_reg8($2) < 0) YYABORT; }
+    | OPC_INC LEFT_PAR REG16 RIGHT_PAR                         { if(inc_preg16($3) < 0) YYABORT; }
+    | OPC_INC LEFT_PAR REG16 PLUS BYTE RIGHT_PAR               { if(inc_preg16_byte($3, $5) < 0) YYABORT; }
+    ;
+
+dec:
+    OPC_DEC REG8                                               { if(dec_reg8($2) < 0) YYABORT; }
+    | OPC_DEC LEFT_PAR REG16 RIGHT_PAR                         { if(dec_preg16($3) < 0) YYABORT; }
+    | OPC_DEC LEFT_PAR REG16 PLUS BYTE RIGHT_PAR               { if(dec_preg16_byte($3, $5) < 0) YYABORT; }
+    ;
+
+daa:
+    OPC_DAA                                                    { if(daa() < 0) YYABORT; }
+    ;
+    
+cpl:
+    OPC_CPL                                                    { if(cpl() < 0) YYABORT; }
+    ;
+    
+neg:
+    OPC_NEG                                                    { if(neg() < 0) YYABORT; }
+    ;
+    
+ccf:
+    OPC_CCF                                                    { if(ccf() < 0) YYABORT; }
+    ;
+    
+scf:
+    OPC_SCF                                                    { if(scf() < 0) YYABORT; }
+    ;
+    
+nop:
+    OPC_NOP                                                    { if(nop() < 0) YYABORT; }
+    ;
+    
+halt:
+    OPC_HALT                                                   { if(halt() < 0) YYABORT; }
+    ;
+    
+di:
+    OPC_DI                                                     { if(di() < 0) YYABORT; }
+    ;
+    
+ei:
+    OPC_EI                                                     { if(ei() < 0) YYABORT; }
+    ;
+    
+im:
+    OPC_IM BYTE                                                { if(im($2) < 0) YYABORT; }
+    ;
+
 
 %%
 

@@ -1657,6 +1657,453 @@ int or_identifier(char *identifier) {
     
 }
 
+/**
+ * XOR r8
+ */
+int xor_reg8(int r) {
+    
+    char opc;
+
+    if((r == REG_I) || (r == REG_R)) {
+        set_error("Invalid register");
+        return C_ERROR;
+    }
+    
+    r = get_reg_index(r);
+    opc = 0xA8 | r;
+    add_code(&opc, 1);
+    
+    return C_OK;
+
+}
+
+/**
+ * XOR n
+ */
+int xor_byte(char byte) {
+    
+    char opc[2];
+
+    opc[0] = 0xEE;
+    opc[1] = byte;
+    add_code(&opc[0], 2);
+    
+    return C_OK;
+
+}
+
+/**
+ * XOR (HL)
+ */
+int xor_preg16(int r) {
+
+    char opc;
+
+    if(r != REG_HL) {
+        set_error("Invalid register. Register HL expected");
+        return C_ERROR;
+    }
+    
+    opc = 0xAE;
+    add_code(&opc, 1);
+    
+    return C_OK;
+    
+}
+
+/**
+ * XOR (IX + d)
+ * XOR (IY + d)
+ */
+int xor_preg16_byte(int r, char byte) {
+    char opc[3];
+    
+    if(r == REG_IX) {
+        opc[0] = 0xDD;
+        
+    } else if(r == REG_IY) {
+        opc[0] = 0xFD;
+        
+    } else {
+        set_error("Invalid register. Register IX or IY expected");
+        
+        return C_ERROR;
+    }
+    
+    opc[1] = 0xAE;
+    opc[2] = byte;
+    
+    add_code(&opc[0], 3);
+    
+    return C_OK;
+}
+
+/**
+ * XOR $identifier
+ */
+int xor_identifier(char *identifier) {
+
+    symbol search;
+    symbol *s;
+    
+    search.name = identifier;
+    
+    s = list_find(symbols, &search);
+    
+    if(s == NULL) {
+        set_error("Symbol %s not declared", identifier);
+        return C_ERROR;
+    }
+    
+    if(s->type != SYM_BYTE) {
+        set_error("Symbol %s should be a byte", identifier);
+        return C_ERROR;
+    }
+    
+    return xor_byte(s->value.byte);
+    
+}
+
+/**
+ * CP r8
+ */
+int cp_reg8(int r) {
+    
+    char opc;
+
+    if((r == REG_I) || (r == REG_R)) {
+        set_error("Invalid register");
+        return C_ERROR;
+    }
+    
+    r = get_reg_index(r);
+    opc = 0xB8 | r;
+    add_code(&opc, 1);
+    
+    return C_OK;
+
+}
+
+/**
+ * CP n
+ */
+int cp_byte(char byte) {
+    
+    char opc[2];
+
+    opc[0] = 0xFE;
+    opc[1] = byte;
+    add_code(&opc[0], 2);
+    
+    return C_OK;
+
+}
+
+/**
+ * CP (HL)
+ */
+int cp_preg16(int r) {
+
+    char opc;
+
+    if(r != REG_HL) {
+        set_error("Invalid register. Register HL expected");
+        return C_ERROR;
+    }
+    
+    opc = 0xBE;
+    add_code(&opc, 1);
+    
+    return C_OK;
+    
+}
+
+/**
+ * CP (IX + d)
+ * CP (IY + d)
+ */
+int cp_preg16_byte(int r, char byte) {
+    char opc[3];
+    
+    if(r == REG_IX) {
+        opc[0] = 0xDD;
+        
+    } else if(r == REG_IY) {
+        opc[0] = 0xFD;
+        
+    } else {
+        set_error("Invalid register. Register IX or IY expected");
+        
+        return C_ERROR;
+    }
+    
+    opc[1] = 0xBE;
+    opc[2] = byte;
+    
+    add_code(&opc[0], 3);
+    
+    return C_OK;
+}
+
+/**
+ * CP $identifier
+ */
+int cp_identifier(char *identifier) {
+
+    symbol search;
+    symbol *s;
+    
+    search.name = identifier;
+    
+    s = list_find(symbols, &search);
+    
+    if(s == NULL) {
+        set_error("Symbol %s not declared", identifier);
+        return C_ERROR;
+    }
+    
+    if(s->type != SYM_BYTE) {
+        set_error("Symbol %s should be a byte", identifier);
+        return C_ERROR;
+    }
+    
+    return cp_byte(s->value.byte);
+    
+}
+
+/**
+ * INC r8
+ */
+int inc_reg8(int r) {
+    
+    char opc;
+
+    if((r == REG_I) || (r == REG_R)) {
+        set_error("Invalid register");
+        return C_ERROR;
+    }
+    
+    r = get_reg_index(r);
+    opc = (r << 3) | 0x04;
+    add_code(&opc, 1);
+    
+    return C_OK;
+
+}
+
+/**
+ * INC (HL)
+ */
+int inc_preg16(int r) {
+
+    char opc;
+
+    if(r != REG_HL) {
+        set_error("Invalid register. Register HL expected");
+        return C_ERROR;
+    }
+    
+    opc = 0x34;
+    add_code(&opc, 1);
+    
+    return C_OK;
+    
+}
+
+/**
+ * INC (IX + d)
+ * INC (IY + d)
+ */
+int inc_preg16_byte(int r, char byte) {
+    char opc[3];
+    
+    if(r == REG_IX) {
+        opc[0] = 0xDD;
+        
+    } else if(r == REG_IY) {
+        opc[0] = 0xFD;
+        
+    } else {
+        set_error("Invalid register. Register IX or IY expected");
+        
+        return C_ERROR;
+    }
+    
+    opc[1] = 0x34;
+    opc[2] = byte;
+    
+    add_code(&opc[0], 3);
+    
+    return C_OK;
+}
+
+/**
+ * DEC r8
+ */
+int dec_reg8(int r) {
+    
+    char opc;
+
+    if((r == REG_I) || (r == REG_R)) {
+        set_error("Invalid register");
+        return C_ERROR;
+    }
+    
+    r = get_reg_index(r);
+    opc = (r << 3) | 0x05;
+    add_code(&opc, 1);
+    
+    return C_OK;
+
+}
+
+/**
+ * DEC (HL)
+ */
+int dec_preg16(int r) {
+
+    char opc;
+
+    if(r != REG_HL) {
+        set_error("Invalid register. Register HL expected");
+        return C_ERROR;
+    }
+    
+    opc = 0x35;
+    add_code(&opc, 1);
+    
+    return C_OK;
+    
+}
+
+/**
+ * DEC (IX + d)
+ * DEC (IY + d)
+ */
+int dec_preg16_byte(int r, char byte) {
+    char opc[3];
+    
+    if(r == REG_IX) {
+        opc[0] = 0xDD;
+        
+    } else if(r == REG_IY) {
+        opc[0] = 0xFD;
+        
+    } else {
+        set_error("Invalid register. Register IX or IY expected");
+        
+        return C_ERROR;
+    }
+    
+    opc[1] = 0x35;
+    opc[2] = byte;
+    
+    add_code(&opc[0], 3);
+    
+    return C_OK;
+}
+
+int daa() {
+    char opc;
+
+    opc = 0x27;
+    add_code(&opc, 1);
+    
+    return C_OK;
+}
+
+int cpl() {
+    char opc;
+
+    opc = 0x2F;
+    add_code(&opc, 1);
+    
+    return C_OK;
+}
+
+int neg() {
+    char opc[2];
+
+    opc[0] = 0xED;
+    opc[1] = 0x44;
+    add_code(&opc[0], 2);
+    
+    return C_OK;
+}
+
+int ccf() {
+    char opc;
+
+    opc = 0x3F;
+    add_code(&opc, 1);
+    
+    return C_OK;
+}
+
+int scf() {
+    char opc;
+
+    opc = 0x37;
+    add_code(&opc, 1);
+    
+    return C_OK;
+}
+
+int nop() {
+    char opc;
+
+    opc = 0x00;
+    add_code(&opc, 1);
+    
+    return C_OK;
+}
+
+int halt() {
+    char opc;
+
+    opc = 0x76;
+    add_code(&opc, 1);
+    
+    return C_OK;
+}
+
+int di() {
+    char opc;
+
+    opc = 0xF3;
+    add_code(&opc, 1);
+    
+    return C_OK;
+}
+
+int ei() {
+    char opc;
+
+    opc = 0xFB;
+    add_code(&opc, 1);
+    
+    return C_OK;
+}
+
+int im(int byte) {
+    char opc[2];
+
+    switch(byte) {
+        case 0x00: opc[1] = 0x46; break;
+        case 0x01: opc[1] = 0x56; break;
+        case 0x02: opc[1] = 0x5E; break;
+        default:
+            set_error("Invalid value %d. Expected 0, 1 or 2", byte);
+            return C_ERROR;
+    }
+
+    opc[0] = 0xED;
+    add_code(&opc[0], 2);
+    
+    return C_OK;
+}
+
+
 /* Start here */
 
 void usage(char *pgm_name) {

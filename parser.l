@@ -97,6 +97,20 @@ int line = 1;
     "sbc"                       { return OPC_SBC;  }
     "and"                       { return OPC_AND;  }
     "or"                        { return OPC_OR;   }
+    "xor"                       { return OPC_XOR;  }
+    "cp"                        { return OPC_CP;   }
+    "inc"                       { return OPC_INC;  }
+    "dec"                       { return OPC_DEC;  }
+    "daa"                       { return OPC_DAA;  }
+    "cpl"                       { return OPC_CPL;  }
+    "neg"                       { return OPC_NEG;  }
+    "ccf"                       { return OPC_CCF;  }
+    "scf"                       { return OPC_SCF;  }
+    "nop"                       { return OPC_NOP;  }
+    "halt"                      { return OPC_HALT; }
+    "di"                        { return OPC_DI;   }
+    "ei"                        { return OPC_EI;   }
+    "im"                        { return OPC_IM;   }
 
     ";"                         { BEGIN(COMMENT); }
     .                           ; 

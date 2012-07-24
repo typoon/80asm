@@ -95,4 +95,36 @@ int or_preg16(int r);
 int or_preg16_byte(int r, char byte);
 int or_identifier(char *identifier);
 
+int xor_reg8(int r);
+int xor_byte(char byte);
+int xor_preg16(int r);
+int xor_preg16_byte(int r, char byte);
+int xor_identifier(char *identifier);
+
+int cp_reg8(int r);
+int cp_byte(char byte);
+int cp_preg16(int r);
+int cp_preg16_byte(int r, char byte);
+int cp_identifier(char *identifier);
+
+int inc_reg8(int r);
+int inc_preg16(int r);
+int inc_preg16_byte(int r, char byte);
+
+int dec_reg8(int r);
+int dec_preg16(int r);
+int dec_preg16_byte(int r, char byte);
+
+/* General purpose */
+int daa();
+int cpl();
+int neg();
+int ccf();
+int scf();
+int nop();
+int halt();
+int di();
+int ei();
+int im(int byte);
+
 #endif
